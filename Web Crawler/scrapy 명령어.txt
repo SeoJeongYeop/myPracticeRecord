@@ -1,0 +1,9 @@
+scrapy startproject name
+
+scrapy crawl spiderName 스파이더 실행
+
+scrapy shell url
+
+scrapy crawl quotes -O quotes.json // 기존파일 덮어쓴다.
+
+scrapy crawl quotes -o quotes.jl // 기존파일에 추가한다.
