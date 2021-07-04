@@ -1,0 +1,38 @@
+### https://opentutorials.org/course/3161 ###
+
+use opentutorials -- 데이터베이스 사용
+
+테이블 생성
+CREATE TABLE topic (
+  id INT(11) NOT NULL AUTO_INCREMENT,
+  title VARCHAR(30) NOT NULL,
+  description TEXT,
+  created DATETIME NOT NULL,
+  author_id INT(11) NULL,
+  PRIMARY KEY (id)
+);
+
+DESC topic; -- 테이블 정보 출력
+INSERT INTO topic (title, description,created, author, profile) VALUES('title','description','created','author','profile');
+
+SELECT * FROM topic; -- 전체 조회
+SELECT id, title, created, author FROM topic; --필요한 column만 조회
+SELECT id, title, created, author FROM topic WHERE author = 'egoing'; --필요한 정보만 조회
+
+SELECT * FROM topic WHERE author ='egoing' ORDER BY id DESC; --내림차순 정렬
+SELECT * FROM topic WHERE author='egoing' ORDER BY id DESC LIMIT 2;
+2개 제한
+
+UPDATE topic SET description = 'ORACLE is ...', title='Oracle' WHERE id = 2;
+### 주의! WHERE문 을 빠뜨리면 재앙이 일어난다
+DELETE FROM topic WHERE id=5;
+### 주의! WHERE문 을 빠뜨리면 재앙이 일어난다
+
+왜 관계형 데이터 베이스가 필요한가
+데이터가 중복되면 중요한 신호
+데이터가 중복되면 여러가지 문제점 발생, 데이터가 복잡하고 용량이 큰 데이터가 1000만번 등장한다면? 기술적 경제적으로 손해, 그리고 수정이 필요할 때, 수정작업도 어려울것. 각각의 데이터들이 용량이 크다면, 같은 데이터라는것을 확신하기 어려울수 있다. 
+
+RENAME TABLE topic TO topic_back_up
+
+-join
+SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id;
