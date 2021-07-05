@@ -1,5 +1,9 @@
 import scrapy
 import regex as re
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
+from . import items
 
 ### 크롤링 방법
 # 1. https://www.fda.gov/news-events/fda-newsroom/press-announcements?page=0 에서 시작해서 page=85 까지의 뉴스기사 리스트를 읽는다.
@@ -11,7 +15,7 @@ class FDASpider(scrapy.Spider):
     
     def start_requests(self):
         
-        start_url = 'https://www.fda.gov/news-events/fda-newsroom/press-announcements'
+        start_url = 'htquittps://www.fda.gov/news-events/fda-newsroom/press-announcements'
         yield scrapy.Request(url = start_url, callback = self.parseList)
         
     def parseList(self, response):
@@ -33,10 +37,12 @@ class FDASpider(scrapy.Spider):
         })
         #scrapy.Request(url = "", callback = self.parsePress) 
     def parsePress(self, response):
-        title = ''
+        item = items.FdaPressItem()
+        item['title'] = response.xpath('.//h1[@class="content-title text-center"]/text()')
+        #title = ''
         date = ''
         contents = []
-        title = response.css('h1.content-title.text-center::text').get()
+        #title = response.css('h1.content-title.text-center::text').get()
         date = response.css("time::text").get()
         for content in response.css('div.col-md-8.col-md-push-2 p::text').getall() :
             content = content.strip()
@@ -44,7 +50,7 @@ class FDASpider(scrapy.Spider):
                 contents.append(content)
 
         yield {
-            'title' : title,
+            'title' : item['title'],
             'date' : date,
             'contents' : contents,
         }
