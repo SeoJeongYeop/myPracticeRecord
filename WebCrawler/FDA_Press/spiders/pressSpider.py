@@ -1,9 +1,10 @@
 import scrapy
 import regex as re
 import sys, os
+import time
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
-from . import items
+from .. import items
 
 ### 크롤링 방법
 # 1. https://www.fda.gov/news-events/fda-newsroom/press-announcements?page=0 에서 시작해서 page=85 까지의 뉴스기사 리스트를 읽는다.
@@ -15,42 +16,46 @@ class FDASpider(scrapy.Spider):
     
     def start_requests(self):
         
-        start_url = 'htquittps://www.fda.gov/news-events/fda-newsroom/press-announcements'
+        start_url = 'https://www.fda.gov/news-events/fda-newsroom/press-announcements'
         yield scrapy.Request(url = start_url, callback = self.parseList)
         
     def parseList(self, response):
         seed_url = 'https://www.fda.gov'
         pressList = []
-        for press in response.css('span.field-content a::attr(href)').getall():
-            
+        
+        for press in response.xpath('.//span[@class="field-content"]/a/@href').getall():        
             if press is not None:
                 print(press)
                 pressList.append(press)
-                yield scrapy.Request(url =seed_url+ press, callback = self.parsePress)
-        for page in response.xpath('//li[@class="pager__item"]/a/@href').getall():
+                yield response.follow(press, callback=self.parsePress)
+                #scrapy.Request(url =seed_url+ press, callback = self.parsePress)
+        for page in response.xpath('.//li[@class="pager__item"]/a/@href').getall():
             if page is not None:
                 yield response.follow(page, callback=self.parseList)
         
-        #
-        print ({
-            'List' : pressList,
-        })
+        #print ({'List' : pressList,})
         #scrapy.Request(url = "", callback = self.parsePress) 
+
     def parsePress(self, response):
         item = items.FdaPressItem()
-        item['title'] = response.xpath('.//h1[@class="content-title text-center"]/text()')
-        #title = ''
-        date = ''
-        contents = []
-        #title = response.css('h1.content-title.text-center::text').get()
-        date = response.css("time::text").get()
-        for content in response.css('div.col-md-8.col-md-push-2 p::text').getall() :
+        item['title'] = response.xpath('.//h1[@class="content-title text-center"]/text()').get()
+        item['date'] = response.xpath('.//time/text()').get()
+       
+        
+        contents = ""
+        for content in response.xpath('.//div[@class="col-md-8 col-md-push-2"]/p/text()').getall() :
             content = content.strip()
             if len(content) > 10:
-                contents.append(content)
-
-        yield {
-            'title' : item['title'],
-            'date' : date,
-            'contents' : contents,
-        }
+                contents = contents + " "+ content
+        for content in response.xpath('.//div[@class="col-md-8 col-md-push-2"]/ul/li/text()').getall() :
+            content = content.strip()
+            if len(content) > 10:
+                contents = contents + " "+ content
+        for content in response.xpath('.//div[@class="col-md-8 col-md-push-2"]/ul/li/ul/li/text()').getall() :
+            content = content.strip()
+            if len(content) > 10:
+                contents = contents + " "+ content
+        item['contents'] = contents
+        #time.sleep(0.5)
+        if item != None :
+            yield item
