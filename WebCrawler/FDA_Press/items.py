@@ -5,7 +5,6 @@
 
 import scrapy
 
-
 class FdaPressItem(scrapy.Item):
     # define the fields for your item here like:
     title = scrapy.Field()

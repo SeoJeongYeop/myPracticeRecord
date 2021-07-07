@@ -12,7 +12,6 @@ BOT_NAME = 'FDA_Press'
 SPIDER_MODULES = ['FDA_Press.spiders']
 NEWSPIDER_MODULE = 'FDA_Press.spiders'
 
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'FDA_Press (+http://www.yourdomain.com)'
 
@@ -63,7 +62,7 @@ FEED_EXPORT_ENCODING = 'utf-8'
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'FDA_Press.pipelines.FdaPressPipeline': 30000,
+    'FDA_Press.pipelines.FdaPressPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
