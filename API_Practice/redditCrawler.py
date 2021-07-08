@@ -26,7 +26,6 @@ def scrap_subreddit(subreddit, limit, keyword):
     scrapList = []
     reddit = create_reddit_object()
     subReddit = reddit.subreddit(subreddit).hot(limit = limit)
-
     for submission in subReddit:
         scrapDict = {}
         commentList = []
@@ -34,10 +33,12 @@ def scrap_subreddit(subreddit, limit, keyword):
         scrapDict["keyword"] = keyword
         scrapDict["num"] = num
         scrapDict["title"] = submission.title
-        if checkKeyword(scrapDict["title"], keyword) :
+        scrapDict["selftext"] = submission.selftext
+        if checkKeyword(scrapDict["title"], keyword) or checkKeyword(scrapDict["selftext"], keyword):
             
             date = datetime.fromtimestamp(submission.created_utc)
             scrapDict["date"] = str(date)
+            
             for top_level_comment in submission.comments:
                 commentList.append(top_level_comment.body.strip())
 
@@ -73,6 +74,8 @@ keywordDict['manhwa'] = ['The Remarried Empress', 'True Beauty', 'Men of the Har
 'The Boxer',
 "It's Mine",
 'Shotgun Boy']
+
+
 for subreddit in subredditList:
     print("### subreddit ", subreddit, " ###")
     for keyword in keywordDict[subreddit]:
