@@ -18,6 +18,7 @@ NEWSPIDER_MODULE = 'FDA_Press.spiders'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 FEED_EXPORT_ENCODING = 'utf-8'
+LOG_LEVEL = 'ERROR'
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
